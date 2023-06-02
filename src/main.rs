@@ -122,14 +122,14 @@ async fn main() -> Result<(), anyhow::Error> {
                     }
                     ColumnType::Intn => {
                         // println!("this is a int!!");
-                        let got_error = false;
+                        let _got_error = false;
                         let value = row.try_get::<u8, usize>(index_column);
                         // println!("after u8: {:#?}",value);
-                        let real_value = match value {
-                            Ok(num) => {
+                        let _real_value = match value {
+                            Ok(_num) => {
                                 if let Some(real_value) = value.unwrap() {
                                     // println!("real value u8: {:#?}", real_value);
-                                    worksheet.write(
+                                    let _ = worksheet.write(
                                         index_row as u32 + 1,
                                         index_column as u16,
                                         real_value,
@@ -139,11 +139,11 @@ async fn main() -> Result<(), anyhow::Error> {
                             Err(_) => {
                                 let value = row.try_get::<i64, usize>(index_column);
                                 // println!("after i64: {:#?}",value);
-                                let real_value = match value {
-                                    Ok(num) => {
+                                let _real_value = match value {
+                                    Ok(_num) => {
                                         if let Some(real_value) = value.unwrap() {
                                             // println!("real value i64: {:#?}", real_value);
-                                            worksheet.write(
+                                            let _ = worksheet.write(
                                                 index_row as u32 + 1,
                                                 index_column as u16,
                                                 real_value as i32,
@@ -166,7 +166,7 @@ async fn main() -> Result<(), anyhow::Error> {
                         let value = row.try_get::<&str, usize>(index_column);
                         if let Some(real_value) = value.unwrap() {
                             // println!("real value: {:#?}", real_value);
-                            worksheet.write(index_row as u32 + 1, index_column as u16, real_value);
+                            let _ = worksheet.write(index_row as u32 + 1, index_column as u16, real_value);
                         }
                         // println!("val:{:#?}",value.unwrap());
                     }
@@ -175,7 +175,7 @@ async fn main() -> Result<(), anyhow::Error> {
                         let value = row.try_get::<time::chrono::NaiveDateTime, usize>(index_column);
                         if let Some(real_value) = value.unwrap() {
                             // println!("real value: {:#?}", real_value.to_string());
-                            worksheet.write(
+                            let _ = worksheet.write(
                                 index_row as u32 + 1,
                                 index_column as u16,
                                 real_value.to_string(),
@@ -191,7 +191,7 @@ async fn main() -> Result<(), anyhow::Error> {
             }
         });
 
-    workbook.save(settings.output);
+    let _ = workbook.save(settings.output);
 
     Ok(())
 }
