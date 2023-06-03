@@ -99,7 +99,7 @@ async fn main() -> Result<(), anyhow::Error> {
                 // println!("{:#?}",column);
                 // worksheet.write(index_column as u32 , index_row as u16 , value );
                 match column.column_type() {
-                    ColumnType::Numericn => {
+                    ColumnType::Numericn | ColumnType::Int4 => {
                         // println!("this is a numericcc!!");
                         let value = row.try_get::<Numeric, usize>(index_column);
                         if let Some(real_value) = value.unwrap() {
@@ -162,7 +162,7 @@ async fn main() -> Result<(), anyhow::Error> {
                         // }
                         // println!("val:{:#?}",value.unwrap());
                     }
-                    ColumnType::BigVarChar | ColumnType::NVarchar => {
+                    ColumnType::BigVarChar | ColumnType::NVarchar | ColumnType::Text => {
                         // println!("this is a string!!");
                         let value = row.try_get::<&str, usize>(index_column);
                         if let Some(real_value) = value.unwrap() {

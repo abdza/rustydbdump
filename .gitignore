@@ -16,3 +16,4 @@ Cargo.lock
 settings.json
 query.sql
 output.xlsx
+sql/
