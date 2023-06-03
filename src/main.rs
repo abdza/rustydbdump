@@ -13,6 +13,7 @@ struct Settings {
     port: u16,
     username: String,
     password: String,
+    sqlfile: String,
     output: String,
 }
 
@@ -47,7 +48,7 @@ async fn main() -> Result<(), anyhow::Error> {
     // Handling TLS, login and other details related to the SQL Server.
     let mut client = Client::connect(config, tcp).await?;
 
-    let sql_file_path = Path::new("query.sql");
+    let sql_file_path = Path::new(&settings.sqlfile);
     let mut sql_file = File::open(sql_file_path).unwrap();
     let mut sql_query = String::new();
     sql_file.read_to_string(&mut sql_query).unwrap();

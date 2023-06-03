@@ -4,5 +4,6 @@
   "port":1433,
   "username":"<database username>",
   "password":"<database password>",
+  "sqlfile":"query.sql",
   "output":"output.xlsx"
 }
