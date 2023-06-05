@@ -13,8 +13,9 @@ struct Settings {
     port: u16,
     username: String,
     password: String,
-    sqlfile: String,
     output: String,
+    sqlfile: String,
+    message: String,
 }
 
 #[async_std::main]
@@ -81,7 +82,13 @@ async fn main() -> Result<(), anyhow::Error> {
 
     let mut workbook = Workbook::new();
     let worksheet = workbook.add_worksheet();
+    let mut rowstart = 0;
+    if settings.message.len()>0 {
+        worksheet.write(0,0,settings.message);
+        rowstart += 1;
+    }
 
+    let bold_format = Format::new().set_bold();
     results
         .first()
         .unwrap()
@@ -91,7 +98,7 @@ async fn main() -> Result<(), anyhow::Error> {
             // println!("This is a row!: {:#?}", index_row);
             if index_row == 0 {
                 for (index_column, column) in row.columns().iter().enumerate() {
-                    let _ = worksheet.write(index_row as u32, index_column as u16, column.name());
+                    let _ = worksheet.write_with_format(index_row as u32 + rowstart, index_column as u16, column.name(),&bold_format);
                 }
             }
             for (index_column, column) in row.columns().iter().enumerate() {
@@ -105,7 +112,7 @@ async fn main() -> Result<(), anyhow::Error> {
                         if let Some(real_value) = value.unwrap() {
                             // println!("real value: {:#?}", real_value.value());
                             let _ = worksheet.write(
-                                index_row as u32 + 1,
+                                index_row as u32 + 1 + rowstart,
                                 index_column as u16,
                                 real_value.value() as i32,
                             );
@@ -117,7 +124,7 @@ async fn main() -> Result<(), anyhow::Error> {
                         let value = row.try_get::<bool, usize>(index_column);
                         if let Some(real_value) = value.unwrap() {
                             // println!("real value: {:#?}", real_value);
-                            let _ = worksheet.write(index_row as u32 + 1, index_column as u16, real_value);
+                            let _ = worksheet.write(index_row as u32 + 1 + rowstart, index_column as u16, real_value);
                         }
                         // println!("val:{:#?}",value.unwrap());
                     }
@@ -131,7 +138,7 @@ async fn main() -> Result<(), anyhow::Error> {
                                 if let Some(real_value) = value.unwrap() {
                                     // println!("real value u8: {:#?}", real_value);
                                     let _ = worksheet.write(
-                                        index_row as u32 + 1,
+                                        index_row as u32 + 1 + rowstart,
                                         index_column as u16,
                                         real_value,
                                     );
@@ -145,7 +152,7 @@ async fn main() -> Result<(), anyhow::Error> {
                                         if let Some(real_value) = value.unwrap() {
                                             // println!("real value i64: {:#?}", real_value);
                                             let _ = worksheet.write(
-                                                index_row as u32 + 1,
+                                                index_row as u32 + 1 + rowstart,
                                                 index_column as u16,
                                                 real_value as i32,
                                             );
@@ -167,7 +174,7 @@ async fn main() -> Result<(), anyhow::Error> {
                         let value = row.try_get::<&str, usize>(index_column);
                         if let Some(real_value) = value.unwrap() {
                             // println!("real value: {:#?}", real_value);
-                            let _ = worksheet.write(index_row as u32 + 1, index_column as u16, real_value);
+                            let _ = worksheet.write(index_row as u32 + 1 + rowstart, index_column as u16, real_value);
                         }
                         // println!("val:{:#?}",value.unwrap());
                     }
@@ -177,7 +184,7 @@ async fn main() -> Result<(), anyhow::Error> {
                         if let Some(real_value) = value.unwrap() {
                             // println!("real value: {:#?}", real_value.to_string());
                             let _ = worksheet.write(
-                                index_row as u32 + 1,
+                                index_row as u32 + 1 + rowstart,
                                 index_column as u16,
                                 real_value.to_string(),
                             );
