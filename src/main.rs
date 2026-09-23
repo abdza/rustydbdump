@@ -6,6 +6,8 @@ use std::io::Read;
 use std::path::Path;
 use tiberius::{numeric::Numeric, time, AuthMethod, Client, ColumnType, Config, Query};
 
+mod jasypt;
+
 #[derive(Serialize, Deserialize, Debug)]
 struct Settings {
     database: String,
@@ -32,8 +34,11 @@ async fn main() -> Result<(), anyhow::Error> {
     config.host(settings.host);
     config.port(settings.port);
 
+    // password may be a jasypt ENC(...) value, decrypted with JASYPT_ENCRYPTOR_PASSWORD
+    let password = jasypt::decrypt_if_needed(&settings.password)?;
+
     // Using SQL Server authentication.
-    config.authentication(AuthMethod::sql_server(settings.username, settings.password));
+    config.authentication(AuthMethod::sql_server(settings.username, password));
 
     // on production, it is not a good idea to do this
     config.trust_cert();
@@ -158,7 +163,23 @@ async fn main() -> Result<(), anyhow::Error> {
                                             );
                                         }
                                     }
-                                    Err(_) => continue,
+                                    Err(_) => {
+                                        let value = row.try_get::<i32, usize>(index_column);
+                                        // println!("after i64: {:#?}",value);
+                                        let _real_value = match value {
+                                            Ok(_num) => {
+                                                if let Some(real_value) = value.unwrap() {
+                                                    // println!("real value i64: {:#?}", real_value);
+                                                    let _ = worksheet.write(
+                                                        index_row as u32 + 1 + rowstart,
+                                                        index_column as u16,
+                                                        real_value as i32,
+                                                    );
+                                                }
+                                            }
+                                            Err(_) => continue,
+                                        };
+                                    }
                                 };
                             }
                         };
