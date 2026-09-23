@@ -3,7 +3,7 @@
   "host":"<database host/ip>",
   "port":1433,
   "username":"<database username>",
-  "password":"<database password>",
+  "password":"<database password, or ENC(...) with JASYPT_ENCRYPTOR_PASSWORD set>",
   "sqlfile":"query.sql",
   "output":"output.xlsx",
   "message":"Message sample"
